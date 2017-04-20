@@ -1,0 +1,54 @@
+//// I would prefer this 
+
+( 
+
+
+SynthDef(\perbaikan, { 
+	
+	|out= 0, atk= 0.01, sus=0.5, rel= 1.0|
+	
+	var osc, sig, env, shape, freq, pan, reverb, amp, osc2, osc3, freq2; 
+	
+	shape= Env([0, 1, 1, 0], [atk, sus, rel]);
+
+	env= EnvGen.kr(shape, doneAction:2); 
+	
+	freq= LFNoise1.kr(8.0).exprange(500, 5000); 
+	
+	freq2= LFNoise1.kr(8.0).exprange(25, 100); 
+	
+	
+	freq= freq * LFPulse.kr(8, add:1);
+	
+	freq2= freq2 * LFPulse.kr(8, add:1);
+	
+	
+	
+	amp = LFPulse.kr(XLine.kr(0.1, 0.5, 1), 0.5);
+	
+	osc= SinOsc.ar(freq2, rrand(0.0, 0.5), 0.25)!4;
+	
+	osc2 = Pulse.ar(freq, 0.5, 0.75);
+	
+	osc3= osc + osc2;
+	
+	reverb= FreeVerb.ar(osc3, 0.5, 0.5, 0.5, 0.5);
+	
+	sig= reverb * env; 
+	
+	pan= LFNoise0.ar(rrand(-1, 1));
+	
+	sig= Pan2.ar(sig, pan, 0.5); 
+	
+	Out.ar(out, sig);
+	
+	
+}).add;
+
+
+Pbind(\instrument, \perbaikan, 
+	\dur, 2, 
+
+).play;
+
+)
